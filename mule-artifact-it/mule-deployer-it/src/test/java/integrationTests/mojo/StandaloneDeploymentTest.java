@@ -64,6 +64,7 @@ public class StandaloneDeploymentTest implements SettingsConfigurator {
   @After
   public void after() throws IOException, InterruptedException {
     environment.stop();
+    environment.killMuleProcesses();
     verifier.resetStreams();
   }
 

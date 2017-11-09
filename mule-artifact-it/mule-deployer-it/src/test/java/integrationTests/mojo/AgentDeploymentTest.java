@@ -49,13 +49,16 @@ public class AgentDeploymentTest implements SettingsConfigurator {
     log.info("Initializing context...");
     initializeContext();
     standaloneEnvironment = new StandaloneEnvironment("4.0.0-SNAPSHOT");
+    standaloneEnvironment.killMuleProcesses();
     standaloneEnvironment.start();
     standaloneEnvironment.runAgent();
   }
 
   @After
-  public void after() {
+  public void after() throws InterruptedException, IOException {
     verifier.resetStreams();
+    standaloneEnvironment.stop();
+    standaloneEnvironment.killMuleProcesses();
   }
 
   @Test
@@ -65,6 +68,7 @@ public class AgentDeploymentTest implements SettingsConfigurator {
     verifier.addCliOption("-DmuleDeploy");
     Thread.sleep(30000);
     verifier.executeGoal(DEPLOY);
+    Thread.sleep(30000);
     standaloneEnvironment.verifyDeployment(true, AGENT_TEST_ANCHOR_FILENAME);
     verifier.verifyErrorFreeLog();
   }
